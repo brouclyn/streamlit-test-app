@@ -1,19 +1,15 @@
-import streamlit as st
+import sqlite3
 import pandas as pd
-import numpy as np
+import streamlit as st
 
-st.write("Streamlit supports a wide range of data visualizations, including [Plotly, Altair, and Bokeh charts](https://docs.streamlit.io/develop/api-reference/charts). 📊 And with over 20 input widgets, you can easily make your data interactive!")
+# Connexion à la base
+conn = sqlite3.connect("Netflixdata.db")
 
-all_users = ["Alice", "Bob", "Charly"]
-with st.container(border=True):
-    users = st.multiselect("Users", all_users, default=all_users)
-    rolling_average = st.toggle("Rolling average")
+# Exemple : chargement d'une table
+df = pd.read_sql_query("SELECT * FROM Movie LIMIT 10", conn)
 
-np.random.seed(42)
-data = pd.DataFrame(np.random.randn(20, len(users)), columns=users)
-if rolling_average:
-    data = data.rolling(7).mean().dropna()
+# Affichage dans Streamlit
+st.title("Aperçu de la base Netflix 🎬")
+st.dataframe(df)
 
-tab1, tab2 = st.tabs(["Chart", "Dataframe"])
-tab1.line_chart(data, height=250)
-tab2.dataframe(data, height=250, use_container_width=True)
+# Tu peux maintenant créer des visualisations à partir de df
